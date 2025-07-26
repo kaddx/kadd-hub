@@ -1,0 +1,228 @@
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Konfiguracja
+local KEY_SOURCE_URL = "https://pastefy.app/VlhDKkmQ/raw" -- link do klucza (Discord)
+local SCRIPT_URL = "https://raw.githubusercontent.com/kaddx/kadd-hub/refs/heads/main/Cats%20To%20Cash"  -- tutaj wstaw link do swojego GUI/skryptu
+local DISCORD_LINK = "https://discord.gg/kaddhub"        -- link do discorda
+
+-- Pobieranie klucza
+local REQUIRED_KEY = nil
+pcall(function()
+    REQUIRED_KEY = game:HttpGet(KEY_SOURCE_URL)
+    REQUIRED_KEY = REQUIRED_KEY and REQUIRED_KEY:match("^%s*(.-)%s*$")
+end)
+
+-- Tworzenie GUI
+local gui = Instance.new("ScreenGui", playerGui)
+gui.Name = "KeySystem"
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 400, 0, 220)
+frame.Position = UDim2.new(0.5, -200, 0.5, -110)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BackgroundTransparency = 0.15
+frame.BorderSizePixel = 0
+
+local corner = Instance.new("UICorner", frame)
+corner.CornerRadius = UDim.new(0, 15)
+
+local topBar = Instance.new("Frame", frame)
+topBar.Size = UDim2.new(1, 0, 0, 30)
+topBar.Position = UDim2.new(0, 0, 0, 0)
+topBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+topBar.BorderSizePixel = 0
+-- brak UICorner na topBar, więc brak zaokrągleń
+
+local title = Instance.new("TextLabel", topBar)
+title.Size = UDim2.new(1, -20, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Key System"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+local closeBtn = Instance.new("TextButton", topBar)
+closeBtn.Size = UDim2.new(0, 20, 0, 20)
+closeBtn.Position = UDim2.new(1, -25, 0, 5)
+closeBtn.BackgroundTransparency = 1
+closeBtn.BorderSizePixel = 0
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 18
+
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+-- Pole na klucz
+local box = Instance.new("TextBox", frame)
+box.Size = UDim2.new(0.85, 0, 0, 40)
+box.Position = UDim2.new(0.075, 0, 0.3, 0)
+box.PlaceholderText = "Enter your key here..."
+box.Text = ""
+box.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+box.BackgroundTransparency = 0
+box.TextColor3 = Color3.new(1, 1, 1)
+box.Font = Enum.Font.Gotham
+box.TextSize = 18
+local boxCorner = Instance.new("UICorner", box)
+boxCorner.CornerRadius = UDim.new(0, 10)
+
+-- Label pod polem z informacją o Discordzie (wyśrodkowany)
+local infoLabel = Instance.new("TextLabel", frame)
+infoLabel.Size = UDim2.new(0.85, 0, 0, 20)
+infoLabel.Position = UDim2.new(0.5, 0, 0.3, 45)
+infoLabel.AnchorPoint = Vector2.new(0.5, 0)
+infoLabel.BackgroundTransparency = 1
+infoLabel.Text = "Key is available on Discord"
+infoLabel.TextColor3 = Color3.fromRGB(180, 180, 255)
+infoLabel.Font = Enum.Font.Gotham
+infoLabel.TextSize = 16
+infoLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Status (walidacja klucza)
+local status = Instance.new("TextLabel", frame)
+status.Size = UDim2.new(1, -20, 0, 22)
+status.Position = UDim2.new(0, 10, 0.6, 0)  -- początkowa pozycja
+status.BackgroundTransparency = 1
+status.Text = ""
+status.TextColor3 = Color3.fromRGB(255, 90, 90)
+status.Font = Enum.Font.Gotham
+status.TextSize = 16
+
+-- Submit button
+local submitBtn = Instance.new("TextButton", frame)
+submitBtn.Size = UDim2.new(0.5, -10, 0, 40)
+submitBtn.Position = UDim2.new(0.05, 0, 0.75, 0)
+submitBtn.Text = "Submit"
+submitBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+submitBtn.BackgroundTransparency = 0.8
+submitBtn.TextColor3 = Color3.new(1, 1, 1)
+submitBtn.Font = Enum.Font.GothamBold
+submitBtn.TextSize = 18
+submitBtn.AutoButtonColor = false
+submitBtn.BorderSizePixel = 0
+local submitCorner = Instance.new("UICorner", submitBtn)
+submitCorner.CornerRadius = UDim.new(0, 10)
+
+submitBtn.MouseEnter:Connect(function()
+    submitBtn.BackgroundTransparency = 0
+end)
+submitBtn.MouseLeave:Connect(function()
+    submitBtn.BackgroundTransparency = 0.8
+end)
+
+-- Discord button (kopiuje link)
+local discordBtn = Instance.new("TextButton", frame)
+discordBtn.Size = UDim2.new(0.35, 0, 0, 40)
+discordBtn.Position = UDim2.new(0.6, 0, 0.75, 0)
+discordBtn.Text = "Discord"
+discordBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+discordBtn.BackgroundTransparency = 0.8
+discordBtn.TextColor3 = Color3.new(1, 1, 1)
+discordBtn.Font = Enum.Font.GothamBold
+discordBtn.TextSize = 18
+discordBtn.AutoButtonColor = false
+discordBtn.BorderSizePixel = 0
+local discordCorner = Instance.new("UICorner", discordBtn)
+discordCorner.CornerRadius = UDim.new(0, 10)
+
+discordBtn.MouseEnter:Connect(function()
+    discordBtn.BackgroundTransparency = 0
+end)
+discordBtn.MouseLeave:Connect(function()
+    discordBtn.BackgroundTransparency = 0.8
+end)
+
+-- Label pojawiający się po skopiowaniu linku (na dole, na środku)
+local copyStatus = Instance.new("TextLabel", frame)
+copyStatus.Size = UDim2.new(1, 0, 0, 22)
+copyStatus.Position = UDim2.new(0, 0, 1, -25)
+copyStatus.BackgroundTransparency = 1
+copyStatus.Text = ""
+copyStatus.TextColor3 = Color3.new(1, 1, 1) -- biały kolor
+copyStatus.Font = Enum.Font.Gotham
+copyStatus.TextSize = 16
+copyStatus.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Przeciąganie GUI przez topBar
+local dragging = false
+local dragInput, dragStart, startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
+end
+
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+topBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+-- Obsługa przycisku Submit
+submitBtn.MouseButton1Click:Connect(function()
+    if box.Text == REQUIRED_KEY then
+        status.TextColor3 = Color3.new(1, 1, 1) -- biały kolor
+        status.Text = "Correct Key"
+        status.Position = UDim2.new(0, 10, 0.65, 0) -- przesunięcie trochę niżej
+        task.wait(1)
+        gui:Destroy()
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(SCRIPT_URL))()
+        end)
+    else
+        status.TextColor3 = Color3.fromRGB(255, 90, 90)
+        status.Text = "Invalid Key"
+        status.Position = UDim2.new(0, 10, 0.65, 0) -- przesunięcie trochę niżej
+        task.delay(2, function()
+            if status.Text == "Invalid Key" or status.Text == "Correct Key" then
+                status.Text = ""
+                status.Position = UDim2.new(0, 10, 0.6, 0) -- wracamy do domyślnej pozycji
+            end
+        end)
+    end
+end)
+
+-- Obsługa przycisku Discord (kopiuje link)
+discordBtn.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(DISCORD_LINK)
+        copyStatus.Text = "Link has been copied"
+        task.delay(3, function()
+            copyStatus.Text = ""
+        end)
+    else
+        copyStatus.Text = ""
+    end
+end)
