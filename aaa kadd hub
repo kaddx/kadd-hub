@@ -1,0 +1,14 @@
+local Supported = {
+      [17126500142] = "https://raw.githubusercontent.com/kaddx/kadd-hub/refs/heads/main/Abyss%20Miner%20x", -- Abyss Miner
+      [75852144330025] = "https://raw.githubusercontent.com/kaddx/kadd-hub/refs/heads/main/Anime%20Girl%20RNG%20x", -- Anime Girl RNG
+}
+ 
+local ID = game.PlaceId 
+local scriptUrl = Supported[ID]
+ 
+if scriptUrl == nil then
+    warn("Game is not supported")
+    return
+end
+ 
+loadstring(game:HttpGet(scriptUrl))()
